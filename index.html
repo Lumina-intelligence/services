@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ripa Navasardyan - KI Services</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafbfc;
+            color: #1a1a1a;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: attr(data-text);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Playfair Display', serif;
+            font-size: 5em;
+            font-weight: 900;
+            color: rgba(44, 62, 80, 0.02);
+            z-index: 0;
+            pointer-events: none;
+            text-align: center;
+            width: 100%;
+            line-height: 1.3;
+        }
+        
+        .language-switcher {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .language-switcher.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+        
+        .lang-btn {
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .lang-btn.active {
+            border-color: #2c3e50;
+            box-shadow: 0 5px 15px rgba(44, 62, 80, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .lang-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .lang-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 60px;
+            align-items: center;
+            margin-bottom: 100px;
+            background: white;
+            padding: 60px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .profile-pic {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid #2c3e50;
+            box-shadow: 0 20px 60px rgba(44, 62, 80, 0.15);
+            background: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            font-weight: 700;
+            color: white;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .profile-pic:hover {
+            transform: scale(1.05);
+            box-shadow: 0 30px 80px rgba(44, 62, 80, 0.25);
+        }
+        
+        .profile-pic.dragover {
+            transform: scale(1.1);
+            box-shadow: 0 35px 90px rgba(44, 62, 80, 0.3);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .ki-badge {
+            display: inline-block;
+            background: #2c3e50;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(44, 62, 80, 0.2);
+        }
+        
+        .target-industries {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .industries-label {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .industry-tag {
+            background: #f8f9fa;
+            color: #2c3e50;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .hero-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5em;
+            font-weight: 900;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
+        
+        .subtitle {
+            font-size: 1.4em;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        
+        .tagline {
+            font-size: 1.3em;
+            color: #505050;
+            line-height: 1.7;
+            font-weight: 400;
+            max-width: 600px;
+        }
+        
+        .services-section {
+            margin-bottom: 80px;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #2c3e50;
+        }
+        
+        .services-masonry {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .service-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e8e8e8;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #2c3e50;
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+            border-color: #2c3e50;
+        }
+        
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .service-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        
+        .service-card > p {
+            color: #6c757d;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-size: 1em;
+        }
+        
+        .examples {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 4px solid #34495e;
+        }
+        
+        .examples strong {
+            display: block;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-size: 1em;
+            font-weight: 600;
+        }
+        
+        .examples ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .examples li {
+            padding: 6px 0;
+            padding-left: 24px;
+            position: relative;
+            color: #505050;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        
+        .examples li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #34495e;
+            font-weight: 700;
+        }
+        
+        .contact-section {
+            background: transparent;
+            padding: 0;
+            margin-top: 100px;
+        }
+        
+        .motivation-section {
+            background: #2c3e50;
+            padding: 80px 60px;
+            border-radius: 30px;
+            margin-bottom: 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .motivation-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+        }
+        
+        .motivation-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .motivation-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5em;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+        
+        .motivation-text {
+            font-size: 1.4em;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.8;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+        
+        .motivation-highlight {
+            font-size: 1.6em;
+            color: white;
+            font-weight: 600;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 5px solid white;
+        }
+        
+        .contact-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .contact-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        
+        .contact-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        
+        .cta-text {
+            font-size: 1.3em;
+            color: #6c757d;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+        
+        .contact-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .contact-item {
+            background: white;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8e8e8;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+            transform: translateY(-5px);
+            border-color: #2c3e50;
+        }
+        
+        .contact-icon-wrapper {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        
+        .contact-info {
+            flex: 1;
+        }
+        
+        .contact-label {
+            font-size: 0.75em;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .contact-item-text {
+            color: #2c3e50;
+            font-size: 1.3em;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        .contact-item-text a {
+            color: #2c3e50;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .contact-item-text a:hover {
+            color: #34495e;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #e8e8e8;
+            margin: 60px 0;
+        }
+        
+        .disclaimer {
+            margin-top: 50px;
+            padding: 30px;
+            background: #f5f6f7;
+            border-radius: 16px;
+            border-left: 4px solid #2c3e50;
+        }
+        
+        .disclaimer p {
+            color: #505050;
+            font-size: 0.95em;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+        
+        .disclaimer p:last-child {
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 1200px) {
+            .services-masonry {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+            
+            body::before {
+                font-size: 2.5em;
+            }
+            
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 40px 30px;
+                gap: 40px;
+            }
+            
+            .hero-content h1 {
+                font-size: 3em;
+            }
+            
+            .profile-pic {
+                width: 200px;
+                height: 200px;
+                margin: 0 auto;
+            }
+            
+            .services-masonry {
+                grid-template-columns: 1fr;
+            }
+            
+            .motivation-section {
+                padding: 50px 30px;
+            }
+            
+            .motivation-title {
+                font-size: 2.5em;
+            }
+            
+            .motivation-text {
+                font-size: 1.2em;
+            }
+            
+            .motivation-highlight {
+                font-size: 1.3em;
+            }
+            
+            .contact-header h3 {
+                font-size: 2.5em;
+            }
+            
+            .contact-item {
+                padding: 30px 25px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body data-lang="de">
+    <div class="language-switcher">
+        <button class="lang-btn active" onclick="switchLanguage('de')" title="Deutsch">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 3'%3E%3Crect width='5' height='1' fill='%23000'/%3E%3Crect width='5' height='1' y='1' fill='%23D00'/%3E%3Crect width='5' height='1' y='2' fill='%23FFCE00'/%3E%3C/svg%3E" alt="Deutsch">
+        </button>
+        <button class="lang-btn" onclick="switchLanguage('en')" title="English">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%23B22234'/%3E%3Cpath d='M0,3.5h60M0,6.5h60M0,9.5h60M0,12.5h60M0,15.5h60M0,18.5h60M0,21.5h60M0,24.5h60M0,27.5h60' stroke='%23fff' stroke-width='2.5'/%3E%3Crect width='24' height='17' fill='%233C3B6E'/%3E%3Cg fill='%23fff'%3E%3Ccircle cx='3' cy='2.5' r='0.8'/%3E%3Ccircle cx='7' cy='2.5' r='0.8'/%3E%3Ccircle cx='11' cy='2.5' r='0.8'/%3E%3Ccircle cx='15' cy='2.5' r='0.8'/%3E%3Ccircle cx='19' cy='2.5' r='0.8'/%3E%3Ccircle cx='23' cy='2.5' r='0.8'/%3E%3Ccircle cx='5' cy='5' r='0.8'/%3E%3Ccircle cx='9' cy='5' r='0.8'/%3E%3Ccircle cx='13' cy='5' r='0.8'/%3E%3Ccircle cx='17' cy='5' r='0.8'/%3E%3Ccircle cx='21' cy='5' r='0.8'/%3E%3Ccircle cx='3' cy='7.5' r='0.8'/%3E%3Ccircle cx='7' cy='7.5' r='0.8'/%3E%3Ccircle cx='11' cy='7.5' r='0.8'/%3E%3Ccircle cx='15' cy='7.5' r='0.8'/%3E%3Ccircle cx='19' cy='7.5' r='0.8'/%3E%3Ccircle cx='23' cy='7.5' r='0.8'/%3E%3Ccircle cx='5' cy='10' r='0.8'/%3E%3Ccircle cx='9' cy='10' r='0.8'/%3E%3Ccircle cx='13' cy='10' r='0.8'/%3E%3Ccircle cx='17' cy='10' r='0.8'/%3E%3Ccircle cx='21' cy='10' r='0.8'/%3E%3Ccircle cx='3' cy='12.5' r='0.8'/%3E%3Ccircle cx='7' cy='12.5' r='0.8'/%3E%3Ccircle cx='11' cy='12.5' r='0.8'/%3E%3Ccircle cx='15' cy='12.5' r='0.8'/%3E%3Ccircle cx='19' cy='12.5' r='0.8'/%3E%3Ccircle cx='23' cy='12.5' r='0.8'/%3E%3Ccircle cx='5' cy='15' r='0.8'/%3E%3Ccircle cx='9' cy='15' r='0.8'/%3E%3Ccircle cx='13' cy='15' r='0.8'/%3E%3Ccircle cx='17' cy='15' r='0.8'/%3E%3Ccircle cx='21' cy='15' r='0.8'/%3E%3C/g%3E%3C/svg%3E" alt="English">
+        </button>
+    </div>
+    
+    <div class="container">
+        <div class="hero">
+            <div class="profile-wrapper">
+                <img class="profile-pic" id="profilePic" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Crect fill='%232c3e50' width='280' height='280'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Playfair Display, serif' font-size='64' font-weight='700' fill='white'%3ERN%3C/text%3E%3C/svg%3E" alt="Ripa Navasardyan">
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+            
+            <div class="hero-content">
+                <span class="ki-badge" data-de="KI-EXPERTIN & STRATEGIEBERATERIN" data-en="AI EXPERT & STRATEGY CONSULTANT">KI-EXPERTIN & STRATEGIEBERATERIN</span>
+                <h1>Ripa Navasardyan</h1>
+                <p class="subtitle" data-de="Geschäftsführerin, MBA" data-en="Managing Director, MBA">Geschäftsführerin, MBA</p>
+                <p class="industries-label" data-de="Branchen:" data-en="Industries:">Branchen:</p>
+                <div class="target-industries">
+                    <span class="industry-tag" data-de="Produktion" data-en="Manufacturing">Produktion</span>
+                    <span class="industry-tag" data-de="Logistik" data-en="Logistics">Logistik</span>
+                    <span class="industry-tag" data-de="Handel" data-en="Retail">Handel</span>
+                    <span class="industry-tag" data-de="Dienstleistung" data-en="Services">Dienstleistung</span>
+                    <span class="industry-tag" data-de="Gesundheitswesen" data-en="Healthcare">Gesundheitswesen</span>
+                    <span class="industry-tag" data-de="& weitere" data-en="& more">&amp; weitere</span>
+                </div>
+                <p class="tagline" data-de="Ich helfe Unternehmen jeder Branche, durch intelligente Automatisierung effizienter zu werden – mehr Gewinn, weniger Zeitverschwendung, bessere Planung." data-en="I help companies across all industries become more efficient through intelligent automation – more profit, less time wasted, better planning.">Ich helfe Unternehmen jeder Branche, durch intelligente Automatisierung effizienter zu werden – mehr Gewinn, weniger Zeitverschwendung, bessere Planung.</p>
+            </div>
+        </div>
+        
+        <div class="services-section">
+            <h2 class="section-title">Meine Dienstleistungen</h2>
+            
+            <div class="services-masonry">
+                <div class="service-card">
+                    <h3 data-de="Intelligente Planung & Organisation" data-en="Intelligent Planning & Organization">Intelligente Planung & Organisation</h3>
+                    <p data-de="Ihre Ressourcen - ob Mitarbeiter, Maschinen oder Räume - werden optimal verteilt und genutzt." data-en="Your resources - whether employees, machines or spaces - are optimally distributed and utilized.">Ihre Ressourcen - ob Mitarbeiter, Maschinen oder Räume - werden optimal verteilt und genutzt.</p>
+                    <div class="examples">
+                        <strong data-de="Das bringt es Ihnen:" data-en="Benefits for you:">Das bringt es Ihnen:</strong>
+                        <ul>
+                            <li data-de="Weniger Leerlauf und Wartezeiten" data-en="Less downtime and waiting times">Weniger Leerlauf und Wartezeiten</li>
+                            <li data-de="Termine und Deadlines werden eingehalten" data-en="Appointments and deadlines are met">Termine und Deadlines werden eingehalten</li>
+                            <li data-de="Engpässe frühzeitig erkennen" data-en="Identify bottlenecks early">Engpässe frühzeitig erkennen</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <h3 data-de="Vorhersage zukünftiger Entwicklungen" data-en="Forecasting Future Trends">Vorhersage zukünftiger Entwicklungen</h3>
+                    <p data-de="Erkennen Sie Trends früh und bereiten sich rechtzeitig vor - ob Kundenanfragen, Verkäufe oder saisonale Schwankungen." data-en="Identify trends early and prepare in time - whether customer inquiries, sales or seasonal fluctuations.">Erkennen Sie Trends früh und bereiten sich rechtzeitig vor - ob Kundenanfragen, Verkäufe oder saisonale Schwankungen.</p>
+                    <div class="examples">
+                        <strong data-de="Das bringt es Ihnen:" data-en="Benefits for you:">Das bringt es Ihnen:</strong>
+                        <ul>
+                            <li data-de="Keine überraschenden Engpässe" data-en="No surprising bottlenecks">Keine überraschenden Engpässe</li>
+                            <li data-de="Bessere Planung von Personal und Budget" data-en="Better planning of staff and budget">Bessere Planung von Personal und Budget</li>
+                            <li data-de="Chancen nutzen, bevor andere sie sehen" data-en="Seize opportunities before others see them">Chancen nutzen, bevor andere sie sehen</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <h3 data-de="Automatische Bestandsverwaltung" data-en="Automated Inventory Management">Automatische Bestandsverwaltung</h3>
+                    <p data-de="Ihr Lager, Ihre Materialien oder Ihr Inventar organisiert sich selbst - automatische Nachbestellung zur richtigen Zeit." data-en="Your warehouse, materials or inventory organizes itself - automatic reordering at the right time.">Ihr Lager, Ihre Materialien oder Ihr Inventar organisiert sich selbst - automatische Nachbestellung zur richtigen Zeit.</p>
+                    <div class="examples">
+                        <strong data-de="Das bringt es Ihnen:" data-en="Benefits for you:">Das bringt es Ihnen:</strong>
+                        <ul>
+                            <li data-de="Weniger Kapital im Lager gebunden" data-en="Less capital tied up in inventory">Weniger Kapital im Lager gebunden</li>
+                            <li data-de="Nie mehr &quot;ausverkauft&quot; oder Lieferverzögerungen" data-en="Never &quot;sold out&quot; or delivery delays">Nie mehr "ausverkauft" oder Lieferverzögerungen</li>
+                            <li data-de="Zeit sparen bei Bestellungen und Inventur" data-en="Save time on orders and inventory">Zeit sparen bei Bestellungen und Inventur</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <h3 data-de="Optimierung von Lieferungen & Routen" data-en="Delivery & Route Optimization">Optimierung von Lieferungen & Routen</h3>
+                    <p data-de="Ob Lieferwagen, Servicetechniker oder mobile Dienstleistungen - die beste Route spart Zeit und Geld." data-en="Whether delivery vans, service technicians or mobile services - the best route saves time and money.">Ob Lieferwagen, Servicetechniker oder mobile Dienstleistungen - die beste Route spart Zeit und Geld.</p>
+                    <div class="examples">
+                        <strong data-de="Das bringt es Ihnen:" data-en="Benefits for you:">Das bringt es Ihnen:</strong>
+                        <ul>
+                            <li data-de="Schnellere Lieferzeiten für Kunden" data-en="Faster delivery times for customers">Schnellere Lieferzeiten für Kunden</li>
+                            <li data-de="Weniger Benzinkosten durch kürzere Wege" data-en="Lower fuel costs through shorter routes">Weniger Benzinkosten durch kürzere Wege</li>
+                            <li data-de="Mehr Aufträge pro Tag erledigen" data-en="Complete more orders per day">Mehr Aufträge pro Tag erledigen</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <h3 data-de="Übersicht & Steuerung in Echtzeit" data-en="Real-time Overview & Control">Übersicht & Steuerung in Echtzeit</h3>
+                    <p data-de="Alle wichtigen Kennzahlen Ihres Unternehmens auf einen Blick - jederzeit wissen, wo Sie stehen." data-en="All important metrics of your company at a glance - always know where you stand.">Alle wichtigen Kennzahlen Ihres Unternehmens auf einen Blick - jederzeit wissen, wo Sie stehen.</p>
+                    <div class="examples">
+                        <strong data-de="Das bringt es Ihnen:" data-en="Benefits for you:">Das bringt es Ihnen:</strong>
+                        <ul>
+                            <li data-de="Schnellere und bessere Entscheidungen treffen" data-en="Make faster and better decisions">Schnellere und bessere Entscheidungen treffen</li>
+                            <li data-de="Probleme sofort erkennen und lösen" data-en="Identify and solve problems immediately">Probleme sofort erkennen und lösen</li>
+                            <li data-de="Transparenz für das ganze Team" data-en="Transparency for the entire team">Transparenz für das ganze Team</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <h3 data-de="Testprojekte mit klarem Erfolgsnachweis" data-en="Pilot Projects with Clear Proof of Success">Testprojekte mit klarem Erfolgsnachweis</h3>
+                    <p data-de="Wir starten klein, messen den Erfolg und Sie entscheiden dann, ob es weitergeht. Geringes Risiko, hoher Nutzen." data-en="We start small, measure success and you decide whether to continue. Low risk, high benefit.">Wir starten klein, messen den Erfolg und Sie entscheiden dann, ob es weitergeht. Geringes Risiko, hoher Nutzen.</p>
+                    <div class="examples">
+                        <strong data-de="Das bringt es Ihnen:" data-en="Benefits for you:">Das bringt es Ihnen:</strong>
+                        <ul>
+                            <li data-de="Einstiegslösungen bereits ab 500 € – skalierbar nach Bedarf" data-en="Entry solutions starting from €500 – scalable as needed">Einstiegslösungen bereits ab 500 € – skalierbar nach Bedarf</li>
+                            <li data-de="Maßgeschneidert auf Ihre Unternehmensgröße und Budget" data-en="Tailored to your company size and budget">Maßgeschneidert auf Ihre Unternehmensgröße und Budget</li>
+                            <li data-de="Sie zahlen nur für den Mehrwert, den Sie wirklich erhalten" data-en="You only pay for the value you actually receive">Sie zahlen nur für den Mehrwert, den Sie wirklich erhalten</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="motivation-section">
+            <div class="motivation-content">
+                <h2 class="motivation-title">Die Zukunft wartet nicht.</h2>
+                <p class="motivation-text">
+                    KI wird in den nächsten Jahren jeden Bereich der Wirtschaft revolutionieren. 
+                    Unternehmen, die heute handeln, werden morgen die Marktführer sein.
+                </p>
+                <p class="motivation-text">
+                    Wer wartet, verliert nicht nur Zeit – sondern auch wertvollen Vorsprung gegenüber dem Wettbewerb.
+                </p>
+                <div class="motivation-highlight">
+                    Die Frage ist nicht OB, sondern WANN Sie starten. 
+                    Ihre Konkurrenz denkt bereits über KI nach – oder nutzt sie schon.
+                </div>
+            </div>
+        </div>
+        
+        <div class="contact-section">
+            <div class="contact-wrapper">
+                <div class="contact-header">
+                    <h3>Lassen Sie uns reden</h3>
+                    <p class="cta-text">Kostenloses Erstgespräch – gemeinsam finden wir<br>die beste Lösung für Ihr Unternehmen</p>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="contact-cards">
+                    <div class="contact-item">
+                        <div class="contact-icon-wrapper">📞</div>
+                        <div class="contact-info">
+                            <div class="contact-label">Telefon</div>
+                            <div class="contact-item-text">
+                                <a href="tel:+491763048340">+49 176 304 83 404</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon-wrapper">✉️</div>
+                        <div class="contact-info">
+                            <div class="contact-label">E-Mail</div>
+                            <div class="contact-item-text">
+                                <a href="mailto:ripa.lumina-intelligence@outlook.de">ripa.lumina-intelligence@outlook.de</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="disclaimer">
+                    <p>Diese Übersicht dient ausschließlich zu Informationszwecken und richtet sich an Personen, die eine Weiterempfehlung aussprechen möchten.</p>
+                    <p>Für detaillierte Informationen zum Ablauf, Projektstart sowie Unternehmensdetails kontaktieren Sie mich bitte per E-Mail.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const translations = {
+            de: {
+                watermark: 'Künstliche Intelligenz für echte Ergebnisse',
+                sectionTitle: 'Meine Dienstleistungen',
+                motivationTitle: 'Die Zukunft wartet nicht.',
+                motivationText1: 'KI wird in den nächsten Jahren jeden Bereich der Wirtschaft revolutionieren. Unternehmen, die heute handeln, werden morgen die Marktführer sein.',
+                motivationText2: 'Wer wartet, verliert nicht nur Zeit – sondern auch wertvollen Vorsprung gegenüber dem Wettbewerb.',
+                motivationHighlight: 'Die Frage ist nicht OB, sondern WANN Sie starten. Ihre Konkurrenz denkt bereits über KI nach – oder nutzt sie schon.',
+                contactTitle: 'Lassen Sie uns reden',
+                contactCta: 'Kostenloses Erstgespräch – gemeinsam finden wir<br>die beste Lösung für Ihr Unternehmen',
+                phoneLabel: 'Telefon',
+                emailLabel: 'E-Mail',
+                disclaimerText1: 'Diese Übersicht dient ausschließlich zu Informationszwecken und richtet sich an Personen, die eine Weiterempfehlung aussprechen möchten.',
+                disclaimerText2: 'Für detaillierte Informationen zum Ablauf, Projektstart sowie Unternehmensdetails kontaktieren Sie mich bitte per E-Mail.'
+            },
+            en: {
+                watermark: 'Artificial Intelligence for Real Results',
+                sectionTitle: 'My Services',
+                motivationTitle: 'The future won\'t wait.',
+                motivationText1: 'AI will revolutionize every sector of business in the coming years. Companies that act today will be tomorrow\'s market leaders.',
+                motivationText2: 'Those who wait don\'t just lose time – they lose valuable competitive advantage.',
+                motivationHighlight: 'The question is not IF, but WHEN you start. Your competition is already thinking about AI – or already using it.',
+                contactTitle: 'Let\'s talk',
+                contactCta: 'Free consultation – together we\'ll find<br>the best solution for your company',
+                phoneLabel: 'Phone',
+                emailLabel: 'Email',
+                disclaimerText1: 'This overview is for informational purposes only and is intended for people who wish to make referrals.',
+                disclaimerText2: 'For detailed information about the process, project start and company details, please contact me via email.'
+            }
+        };
+        
+        function switchLanguage(lang) {
+            document.body.setAttribute('data-lang', lang);
+            
+            // Update buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update all elements with data-de and data-en
+            document.querySelectorAll('[data-de]').forEach(el => {
+                el.textContent = el.getAttribute('data-' + lang);
+            });
+            
+            // Update specific elements
+            document.querySelector('.section-title').textContent = translations[lang].sectionTitle;
+            document.querySelector('.motivation-title').textContent = translations[lang].motivationTitle;
+            document.querySelectorAll('.motivation-text')[0].textContent = translations[lang].motivationText1;
+            document.querySelectorAll('.motivation-text')[1].textContent = translations[lang].motivationText2;
+            document.querySelector('.motivation-highlight').textContent = translations[lang].motivationHighlight;
+            document.querySelector('.contact-header h3').textContent = translations[lang].contactTitle;
+            document.querySelector('.cta-text').innerHTML = translations[lang].contactCta;
+            document.querySelectorAll('.contact-label')[0].textContent = translations[lang].phoneLabel;
+            document.querySelectorAll('.contact-label')[1].textContent = translations[lang].emailLabel;
+            document.querySelectorAll('.disclaimer p')[0].textContent = translations[lang].disclaimerText1;
+            document.querySelectorAll('.disclaimer p')[1].textContent = translations[lang].disclaimerText2;
+        }
+        
+        const profilePic = document.getElementById('profilePic');
+        const fileInput = document.getElementById('fileInput');
+        
+        profilePic.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                loadImage(file);
+            }
+        });
+        
+        profilePic.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            profilePic.classList.add('dragover');
+        });
+        
+        profilePic.addEventListener('dragleave', () => {
+            profilePic.classList.remove('dragover');
+        });
+        
+        profilePic.addEventListener('drop', (e) => {
+            e.preventDefault();
+            profilePic.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                loadImage(file);
+            }
+        });
+        
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                profilePic.src = e.target.result;
+                profilePic.style.fontSize = '0';
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Scroll-Handler für Flaggen
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            const switcher = document.querySelector('.language-switcher');
+            
+            if (currentScroll > 100) {
+                switcher.classList.add('hidden');
+            } else {
+                switcher.classList.remove('hidden');
+            }
+            
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+</html>
